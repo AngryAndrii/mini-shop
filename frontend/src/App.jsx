@@ -1,7 +1,9 @@
+import ProductCard from "./components/ProductCard.jsx";
+
 function App() {
   return (
     <>
-        Hello world!
+        <ProductCard/>
     </>
   )
 }
