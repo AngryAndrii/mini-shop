@@ -1,7 +1,14 @@
 import {Button, Card} from "antd";
+import {deleteProduct} from "../api/products.js";
 
 
-function ProductCard({name, description, image}) {
+function ProductCard({id, name, description, image, onDelete}) {
+
+    const handleDelete = async () => {
+        await deleteProduct(id);
+        onDelete(id);
+    };
+
     return (
         <>
             <Card title={name} extra={<a href="#">More</a>} style={{width: 300}} hoverable
@@ -16,6 +23,9 @@ function ProductCard({name, description, image}) {
                       />
                   }>
                 <p>{description}</p>
+                <Button color="danger" variant="outlined" onClick={handleDelete}>
+                    Delete
+                </Button>
             </Card>
         </>
     )
