@@ -1,15 +1,14 @@
 import ProductCard from "./components/ProductCard.jsx";
-import axios from "axios";
 import {useEffect, useState} from "react";
+import {getProducts} from "./api/products.js";
 
 function App() {
     const [products, setProducts] = useState([])
 
     const fetch_products = () => {
-        axios.get("http://localhost:8000/products")
-            .then(response => {
-                setProducts(response.data) // <-- ось головне
-            })
+        getProducts().then(response => {
+            setProducts(response.data)
+        })
     }
 
     useEffect(() => {
