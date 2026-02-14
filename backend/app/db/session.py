@@ -9,7 +9,6 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-# Context manager для використання
 def get_db():
     db = SessionLocal()
     try:
