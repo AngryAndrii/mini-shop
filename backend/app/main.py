@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from app.schemas import (
     ProductResponseScheme,
@@ -17,6 +17,8 @@ from app.crud import (
     get_product_by_id
 )
 from app.db.session import get_db
+
+from crud import search_by_name
 
 app = FastAPI()
 
@@ -53,6 +55,15 @@ def add_products(
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     return remove_product(db, product_id)
 
+
+@app.get("/products/search", response_model=List[ProductReadScheme])
+def search_products(
+    name: str = Query(..., min_length=1),
+    db: Session = Depends(get_db)
+):
+    products = search_by_name(db, name)
+
+    return products
 
 origins = [
     "http://127.0.0.1:5173",
