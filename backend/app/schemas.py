@@ -13,6 +13,7 @@ class ProductScheme(BaseModel):
     image: str
 
 class ProductReadScheme(BaseModel):
+    id: int
     name: str
     description: str
     price: Decimal = Field(gt=0)
