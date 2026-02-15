@@ -37,3 +37,8 @@ def remove_product(db: Session, product_id: int):
     db.commit()
 
     return product
+
+def search_by_name(db: Session, name: str ):
+    stmt = select(Product).where(Product.name.ilike(f"%{name}%"))
+    products = db.execute(stmt).scalars().all()
+    return products
