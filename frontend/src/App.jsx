@@ -1,7 +1,7 @@
 import ProductCard from "./components/ProductCard.jsx";
 import {useCallback, useEffect, useState} from "react";
-import {createProduct, getProduct, getProducts} from "./api/products.js";
-import {Button, Form, message, Modal} from "antd";
+import {createProduct, getProduct, getProducts, searchProducts} from "./api/products.js";
+import {Button, Form, Input, message, Modal, Typography} from "antd";
 import CreateForm from "./components/CreateForm.jsx";
 
 function App() {
@@ -55,9 +55,32 @@ function App() {
         }
     };
 
+    const [search, setSearch] = useState("");
+
+    const handleSearch = async () => {
+        try {
+            const data = await searchProducts(search);
+            setProducts(data);
+        } catch {
+            message.error("Search failed");
+        }
+    };
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (!search.trim()) {
+                fetchProducts();
+            } else {
+                handleSearch();
+            }
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
+
     return (
         <div className={"m-5"}>
-            <Button className={"block mx-auto w-full"} type="primary" onClick={showModal}>
+            <Button className={"block mx-auto w-full mb-4"} type="primary" onClick={showModal}>
                 Create product
             </Button>
             <Modal
@@ -68,6 +91,13 @@ function App() {
             >
                 <CreateForm form={form} onFinish={handleCreate}/>
             </Modal>
+            <div>
+                <Typography.Title level={5}>Search by product name:</Typography.Title>
+                <Input type="text"
+                       value={search}
+                       onChange={(e) => setSearch(e.target.value)} placeholder="Search product"/>
+            </div>
+
             <div className={"flex flex-wrap gap-4 mt-5"}>
                 {products.map(product => (
                     <ProductCard
@@ -84,7 +114,12 @@ function App() {
             <Modal
                 title="Product Detail"
                 open={isDetailModalOpen}
+                closable={{'aria-label': 'Custom Close Button'}}
                 onCancel={() => {
+                    setIsDetailModalOpen(false);
+                    setSelectedProduct(null);
+                }}
+                onOk={() => {
                     setIsDetailModalOpen(false);
                     setSelectedProduct(null);
                 }}
