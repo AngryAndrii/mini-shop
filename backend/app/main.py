@@ -68,6 +68,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
 origins = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
+    "https://fastapi-react-shop.netlify.app/"
 ]
 
 app.add_middleware(
