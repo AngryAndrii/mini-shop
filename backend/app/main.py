@@ -10,20 +10,28 @@ from app.schemas import (
     ProductReadScheme,
     ProductCreateScheme
 )
-from app.crud import create_product, get_product_list, remove_product
+from app.crud import (
+    create_product,
+    get_product_list,
+    remove_product,
+    get_product_by_id
+)
 from app.db.session import get_db
-from starlette import status
 
 app = FastAPI()
 
 
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
+    return {"message": "mini shop project"}
 
 
-if __name__ == "main":
-    root()
+@app.get("/products/{product_id}", response_model=ProductReadScheme)
+def get_one_product(
+        product_id: int,
+        db: Session = Depends(get_db)
+):
+    return get_product_by_id(db, product_id)
 
 
 @app.get("/products", response_model=List[ProductReadScheme])
@@ -42,7 +50,7 @@ def add_products(
 
 
 @app.delete("/products/{product_id}", response_model=ProductResponseScheme)
-def delete_product(product_id: int, db=Depends(get_db)):
+def delete_product(product_id: int, db: Session = Depends(get_db)):
     return remove_product(db, product_id)
 
 
@@ -58,3 +66,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if __name__ == "main":
+    root()
