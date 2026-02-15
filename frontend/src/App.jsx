@@ -1,22 +1,22 @@
 import ProductCard from "./components/ProductCard.jsx";
-import {useEffect, useState} from "react";
-import {getProducts} from "./api/products.js";
-import {Button, Modal} from "antd";
+import {useCallback, useEffect, useState} from "react";
+import {createProduct, getProducts} from "./api/products.js";
+import {Button, Form, message, Modal} from "antd";
 import CreateForm from "./components/CreateForm.jsx";
 
 function App() {
     const [products, setProducts] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [form] = Form.useForm();
 
-    const fetch_products = () => {
-        getProducts().then(response => {
-            setProducts(response.data)
-        })
-    }
+    const fetchProducts = useCallback(async () => {
+        const products = await getProducts();
+        setProducts(products);
+    }, []);
 
     useEffect(() => {
-        fetch_products()
-    }, []);
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleDelete = (id) => {
         setProducts(prev =>
@@ -24,31 +24,36 @@ function App() {
         );
     };
 
+    const handleCreate = async (values) => {
+        try {
+            await createProduct(values);
+            message.success("Product created successfully");
+
+            form.resetFields();
+            setIsModalOpen(false);
+            await fetchProducts();
+
+        } catch {
+            message.error("Something went wrong");
+        }
+    };
+
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
     return (
         <div className={"m-5"}>
-            <Button className={"block mx-auto w-1/2"} type="primary" onClick={showModal}>
+            <Button className={"block mx-auto w-full"} type="primary" onClick={showModal}>
                 Create product
             </Button>
             <Modal
                 title="Create product"
-                closable={{'aria-label': 'Custom Close Button'}}
                 open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onCancel={() => setIsModalOpen(false)}
+                onOk={() => form.submit()}
             >
-                <CreateForm />
+                <CreateForm form={form} onFinish={handleCreate}/>
             </Modal>
             <div className={"flex flex-wrap gap-4 mt-5"}>
                 {products.map(product => (

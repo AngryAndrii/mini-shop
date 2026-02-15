@@ -1,4 +1,4 @@
-import {Button, Form, Input, InputNumber} from "antd";
+import {Form, Input, InputNumber} from "antd";
 
 
 const layout = {
@@ -8,59 +8,60 @@ const layout = {
 const validateMessages = {
     required: '${label} is required!',
     types: {
-        email: '${label} is not a valid email!',
         number: '${label} is not a valid number!',
     },
-    number: {
-        range: '${label} must be between ${min} and ${max}',
-    },
-};
-const onFinish = values => {
-    console.log(values);
 };
 
 
-function CreateForm() {
-    return (<>        <Form
+
+function CreateForm({ form, onFinish }) {
+    return (
+        <Form
+            form={form}
             {...layout}
-            name="nest-messages"
+            name="create-product"
             onFinish={onFinish}
-            style={{maxWidth: 600}}
+            style={{ maxWidth: 600 }}
             validateMessages={validateMessages}
         >
-            <Form.Item name={['item', 'name']} label="Name" rules={[{required: true}]}>
-                <Input/>
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input />
             </Form.Item>
-            <Form.Item name={['item', 'description']} label="Description">
-                <Input.TextArea/>
+
+            <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+                <Input.TextArea />
             </Form.Item>
-            <Form.Item name={['item', 'price']} label="Price" rules={[
-                {required: true, message: 'Enter price'},
-                {
-                    pattern: /^\d+(\.\d{1,2})?$/,
-                    message: 'Price must be in format 12.99',
-                },
-            ]}>
-                <InputNumber/>
+
+            <Form.Item
+                name="price"
+                label="Price"
+                rules={[
+                    { required: true, message: 'Enter price' },
+                    {
+                        pattern: /^\d+(\.\d{1,2})?$/,
+                        message: 'Price must be in format 12.99',
+                    },
+                ]}
+            >
+                <InputNumber step={0.01} />
             </Form.Item>
-            <Form.Item name={['item', 'stock']} label="Stock" rules={[{type: 'integer', min: 0, max: 100000}]}>
-                <InputNumber/>
+
+            <Form.Item
+                name="stock"
+                label="Stock"
+                rules={[{ type: 'integer', min: 0, max: 100000, required: true }]}
+            >
+                <InputNumber />
             </Form.Item>
-            <Form.Item name={['item', 'category']} label="Category" rules={[{required: true}]}>
-                <Input/>
+
+            <Form.Item name="category" label="Category" rules={[{ required: true }]}>
+                <Input />
             </Form.Item>
-            <Form.Item name={['item', 'image']} label="Image url">
-                <Input/>
-            </Form.Item>
-            <Form.Item label={null}>
-                <Button type="primary" htmlType="submit">
-                    Create
-                </Button>
+
+            <Form.Item name="image" label="Image url" rules={[{ required: true }]}>
+                <Input />
             </Form.Item>
         </Form>
-        </>
-
-    )
+    );
 }
-
 export default CreateForm

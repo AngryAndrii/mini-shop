@@ -11,7 +11,7 @@ function ProductCard({id, name, description, image, onDelete}) {
 
     return (
         <>
-            <Card title={name} extra={<a href="#">More</a>} style={{width: 300}} hoverable
+            <Card title={name} style={{width: 300}} hoverable
                   cover={
                       <img
                           draggable={false}
