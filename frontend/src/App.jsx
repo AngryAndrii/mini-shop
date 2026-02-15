@@ -1,12 +1,14 @@
 import ProductCard from "./components/ProductCard.jsx";
 import {useCallback, useEffect, useState} from "react";
-import {createProduct, getProducts} from "./api/products.js";
+import {createProduct, getProduct, getProducts} from "./api/products.js";
 import {Button, Form, message, Modal} from "antd";
 import CreateForm from "./components/CreateForm.jsx";
 
 function App() {
     const [products, setProducts] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const [form] = Form.useForm();
 
     const fetchProducts = useCallback(async () => {
@@ -42,6 +44,17 @@ function App() {
         setIsModalOpen(true);
     };
 
+
+    const onGetDetail = async (id) => {
+        try {
+            const product = await getProduct(id);
+            setSelectedProduct(product);
+            setIsDetailModalOpen(true);
+        } catch {
+            message.error("Failed to load product");
+        }
+    };
+
     return (
         <div className={"m-5"}>
             <Button className={"block mx-auto w-full"} type="primary" onClick={showModal}>
@@ -64,9 +77,35 @@ function App() {
                         description={product.description}
                         image={product.image}
                         onDelete={handleDelete}
+                        onDetail={() => onGetDetail(product.id)}
                     />
                 ))}
             </div>
+            <Modal
+                title="Product Detail"
+                open={isDetailModalOpen}
+                onCancel={() => {
+                    setIsDetailModalOpen(false);
+                    setSelectedProduct(null);
+                }}
+            >
+                {selectedProduct && (
+                    <div>
+                        <b>{selectedProduct.name}</b>
+                        <p>{selectedProduct.description}</p>
+                        <p>Price: {selectedProduct.price}</p>
+                        <p>Stock: {selectedProduct.stock}</p>
+                        <img
+                            src={selectedProduct.image}
+                            alt={selectedProduct.name}
+                            style={{width: "100%", marginTop: 10}}
+                            onError={(e) => {
+                                e.target.src = "/mock_product.jpg"
+                            }}
+                        />
+                    </div>
+                )}
+            </Modal>
         </div>
 
     )
