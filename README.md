@@ -25,6 +25,7 @@ A quick introduction how to run a development server
 Backend:
 ```shell
 cd backend
+uv install
 alembic upgrade head
 uvicorn app.main:app --reload
 ```
