@@ -1,7 +1,7 @@
 # Mini shop
 
 A mini e-commerce feature where users can view a
-list of products, search for products. The feature should
+list of products, search for products. The feature
 include both backend and frontend components.
 
 ###  application deployed:
@@ -13,6 +13,29 @@ include both backend and frontend components.
 
 ## Project page:
 https://fastapi-react-shop.netlify.app/
+
+
+## Installing
+A quick introduction how to run a development server
+
+> Add .env file into backend directory with variable from backend/.env.example
+> 
+> Add .env file into frontend directory with variable from frontend/.env.example
+
+Backend:
+```shell
+cd backend
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+Development server should be opened on http://localhost:8000/products
+
+Frontend:
+```shell
+cd frontend
+npm run dev
+```
+Frontend server should be opened on http://localhost:5173/
 
 ## Description of project
 
