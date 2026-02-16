@@ -15,7 +15,8 @@ from app.crud import (
     get_product_list,
     remove_product,
     get_product_by_id,
-    search_by_name
+    search_by_name,
+    update_one_product
 )
 from app.db.session import get_db
 
@@ -63,6 +64,15 @@ def add_products(
 @app.delete("/products/{product_id}", response_model=ProductResponseScheme)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     return remove_product(db, product_id)
+
+
+@app.put("/products/{product_id}", response_model=ProductResponseScheme)
+def update_product(
+        product_id: int,
+        payload: ProductCreateScheme,
+        db: Session = Depends(get_db),
+):
+    return update_one_product(product_id, payload, db)
 
 
 origins = [
