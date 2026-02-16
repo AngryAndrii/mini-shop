@@ -23,7 +23,6 @@ export const deleteProduct = async (id) => {
     await axios.delete(`${API}/${id}`);
 };
 
-
 export const searchProducts = async (name) => {
     const response = await fetch(
         `${API}/search?name=${name}`
@@ -34,4 +33,9 @@ export const searchProducts = async (name) => {
     }
 
     return await response.json();
+};
+
+export const updateProduct = async (id, values) => {
+    const { data } = await axios.put(`${API}/${id}`, values);
+    return data;
 };

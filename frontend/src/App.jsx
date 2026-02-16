@@ -1,6 +1,6 @@
 import ProductCard from "./components/ProductCard.jsx";
 import {useCallback, useEffect, useState} from "react";
-import {createProduct, getProduct, getProducts, searchProducts} from "./api/products.js";
+import {createProduct, getProduct, getProducts, searchProducts, updateProduct} from "./api/products.js";
 import {Button, Form, Input, message, Modal, Typography} from "antd";
 import CreateForm from "./components/CreateForm.jsx";
 
@@ -10,6 +10,8 @@ function App() {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [form] = Form.useForm();
+    const [mode, setMode] = useState("create")
+    const [editingProduct, setEditingProduct] = useState(null)
 
     const fetchProducts = useCallback(async () => {
         const products = await getProducts();
@@ -26,24 +28,37 @@ function App() {
         );
     };
 
-    const handleCreate = async (values) => {
-        try {
-            await createProduct(values);
-            message.success("Product created successfully");
+    const openCreate = () => {
+        setMode("create")
+        setEditingProduct(null)
+        form.resetFields()
+        setIsModalOpen(true)
+    }
 
-            form.resetFields();
-            setIsModalOpen(false);
-            await fetchProducts();
+    const openEdit = (product) => {
+        setMode("edit")
+        setEditingProduct(product)
+        setIsModalOpen(true)
 
-        } catch {
-            message.error("Something went wrong");
+        form.setFieldsValue(product)
+    }
+
+    const handleSubmit = async (values) => {
+        if (mode === "create") {
+            const newProduct = await createProduct(values)
+            setProducts(prev => [...prev, newProduct])
+        } else {
+            const updatedProduct = await updateProduct(editingProduct.id, values)
+            setProducts(prev =>
+                prev.map(p =>
+                    p.id === editingProduct.id ? updatedProduct : p
+                )
+            )
         }
-    };
 
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
+        setIsModalOpen(false)
+        form.resetFields()
+    }
 
     const onGetDetail = async (id) => {
         try {
@@ -76,20 +91,24 @@ function App() {
         }, 500);
 
         return () => clearTimeout(timeout);
-    }, [search]);
+    }, [search, fetchProducts]);
 
     return (
         <div className={"m-5"}>
-            <Button className={"block mx-auto w-full mb-4"} type="primary" onClick={showModal}>
+            <Button
+                className="block mx-auto w-full mb-4"
+                type="primary"
+                onClick={openCreate}
+            >
                 Create product
             </Button>
             <Modal
-                title="Create product"
+                title={mode === "create" ? "Create product" : "Edit product"}
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 onOk={() => form.submit()}
             >
-                <CreateForm form={form} onFinish={handleCreate}/>
+                <CreateForm form={form} onFinish={handleSubmit}/>
             </Modal>
             <div>
                 <Typography.Title level={5}>Search by product name:</Typography.Title>
@@ -108,6 +127,7 @@ function App() {
                         image={product.image}
                         onDelete={handleDelete}
                         onDetail={() => onGetDetail(product.id)}
+                        onUpdate={() => openEdit(product)}
                     />
                 ))}
             </div>
