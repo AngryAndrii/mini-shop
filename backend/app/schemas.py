@@ -34,6 +34,10 @@ class ProductCreateScheme(BaseModel):
 class ProductResponseScheme(BaseModel):
     id: int
     name: str
-    price: float
+    description: str
+    price: Decimal = Field(gt=0)
+    stock: int
+    category: str
+    image: str
 
     model_config = ConfigDict(from_attributes=True)

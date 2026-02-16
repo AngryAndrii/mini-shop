@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, Sequence
 from sqlalchemy.orm import Session
 
 from app.schemas import ProductCreateScheme
@@ -30,7 +30,7 @@ def create_product(db: Session, product: ProductCreateScheme) -> Product:
     return db_product
 
 
-def remove_product(db: Session, product_id: int):
+def remove_product(db: Session, product_id: int) -> Product:
     product = get_product_by_id(db, product_id)
 
     db.delete(product)
@@ -38,7 +38,22 @@ def remove_product(db: Session, product_id: int):
 
     return product
 
-def search_by_name(db: Session, name: str ):
+def search_by_name(db: Session, name: str ) -> Sequence[Product]:
     stmt = select(Product).where(Product.name.ilike(f"%{name}%"))
     products = db.execute(stmt).scalars().all()
     return products
+
+def update_one_product(product_id: int, payload: ProductCreateScheme, db: Session) -> Product:
+    product = get_product_by_id(db, product_id)
+
+    product.name = payload.name
+    product.description = payload.description
+    product.price = payload.price
+    product.stock = payload.stock
+    product.category = payload.category
+    product.image = payload.image
+
+    db.commit()
+    db.refresh(product)
+
+    return product

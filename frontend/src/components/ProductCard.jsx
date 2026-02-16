@@ -2,7 +2,7 @@ import {Button, Card} from "antd";
 import {deleteProduct} from "../api/products.js";
 
 
-function ProductCard({id, name, description, image, onDelete, onDetail}) {
+function ProductCard({id, name, description, image, onDelete, onDetail, onUpdate}) {
 
     const handleDelete = async () => {
         await deleteProduct(id);
@@ -11,6 +11,10 @@ function ProductCard({id, name, description, image, onDelete, onDetail}) {
 
     const handleGetDetail = async () => {
         onDetail(id)
+    }
+
+    const handleUpdate = async () => {
+        onUpdate(id)
     }
 
     return (
@@ -31,8 +35,11 @@ function ProductCard({id, name, description, image, onDelete, onDetail}) {
                     <Button className={"mr-3"} color="danger" variant="outlined" onClick={handleDelete}>
                         Delete
                     </Button>
-                    <Button color="primary" variant="outlined" onClick={handleGetDetail}>
+                    <Button className={"mr-3"} color="primary" variant="outlined" onClick={handleGetDetail}>
                         Details
+                    </Button>
+                    <Button color="purple" variant="outlined" onClick={handleUpdate}>
+                        Update
                     </Button>
                 </div>
 
