@@ -82,3 +82,7 @@ If you enter incorrect values - errors will be displayed
 Product successfully created!
 
 ![created](images_for_readme/created.JPG)
+
+We can update product detail:
+
+![list](images_for_readme/update.JPG)
